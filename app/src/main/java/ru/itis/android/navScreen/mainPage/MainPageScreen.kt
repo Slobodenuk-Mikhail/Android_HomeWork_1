@@ -21,7 +21,7 @@ fun MainPageScreen(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars)
         ) {
-            Text(text = "Sample text")
+            Text(text = "MainScreen")
 
             Button(onClick = {
                 navController.navigate(NavigationIds.VIEW_TASKS.name)

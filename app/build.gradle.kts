@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.android_homework"
+    namespace = "ru.itis.android"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.android_homework"
+        applicationId = "ru.itis.android"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -34,6 +34,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
     }
 }
 

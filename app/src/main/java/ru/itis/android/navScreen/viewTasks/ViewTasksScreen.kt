@@ -16,7 +16,7 @@ fun ViewTasksScreen() {
             modifier = Modifier
                 .windowInsetsPadding(WindowInsets.systemBars)
         ) {
-            Text(text = "Sample text")
+            Text(text = "Tasks")
         }
     }
 }
