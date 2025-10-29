@@ -10,10 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ru.itis.android.model.TaskDataModel
-import ru.itis.android.navScreen.taskViewer.ViewTasksScreen
+import ru.itis.android.navScreen.taskCreator.TaskCreatorScreen
+import ru.itis.android.navScreen.taskViewer.TaskViewerScreen
 import ru.itis.android.navigation.CustomNavType
-import ru.itis.android.navigation.MainPageStartObject
-import ru.itis.android.navigation.ViewTasksObject
+import ru.itis.android.navigation.MainPageObject
+import ru.itis.android.navigation.TaskCreatorObject
+import ru.itis.android.navigation.TaskViewerObject
 import kotlin.reflect.typeOf
 
 class MainActivity : ComponentActivity() {
@@ -26,21 +28,33 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(
                 navController = navController,
-                startDestination = MainPageStartObject
+                startDestination = MainPageObject
             ) {
-                composable< MainPageStartObject>{
+                composable<MainPageObject>{
                     MainPageScreen(navController = navController)
                 }
-                composable<ViewTasksObject>(
+                composable<TaskViewerObject>(
                     typeMap = mapOf(
-                        typeOf<TaskDataModel>() to CustomNavType.TaskDataNavType
+                        typeOf<ArrayList<TaskDataModel>>() to CustomNavType.ArrayListOfTasksDataNavType
                     )
                 ){ entry ->
-                    val args = entry.toRoute<ViewTasksObject>()
-                    ViewTasksScreen(
-                        firstArg = args.taskTitle,
-                        secondArg = args.taskText,
+                    val args = entry.toRoute<TaskViewerObject>()
+                    TaskViewerScreen(
+                        userEmail = args.userEmail,
+                        arrayListOfTasks = args.arrayListOfTasks,
                         navController = navController,
+                    )
+                }
+                composable<TaskCreatorObject>(
+                    typeMap = mapOf(
+                        typeOf<ArrayList<TaskDataModel>>() to CustomNavType.ArrayListOfTasksDataNavType
+                    )
+                ) { entry ->
+                    val args = entry.toRoute< TaskCreatorObject>()
+                    TaskCreatorScreen(
+                        userEmail = args.userEmail,
+                        arrayListOfTasks = args.arrayListOfTasks,
+                        navController = navController
                     )
                 }
             }

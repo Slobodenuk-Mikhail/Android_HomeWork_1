@@ -5,21 +5,20 @@ import ru.itis.android.model.TaskDataModel
 
 
 @Serializable
-data class MainPageObject (
-    val email: String,
-//    val password: String,
-)
+data object MainPageObject
 
-@Serializable
-data object MainPageStartObject
 
 //@Serializable
 //data object ViewTasksScreenObject
 
+@Serializable
+data class TaskCreatorObject(
+    val userEmail: String,
+    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
+)
 
 @Serializable
-data class ViewTasksObject(
-    val taskTitle: String,
-    val taskText: String,
-    val taskData: TaskDataModel,
+data class TaskViewerObject(
+    val userEmail: String,
+    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
 )

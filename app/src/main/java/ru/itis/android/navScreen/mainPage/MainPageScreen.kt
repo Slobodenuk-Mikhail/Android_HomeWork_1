@@ -1,6 +1,4 @@
-import android.content.Context
 import android.util.Patterns
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.itis.android.model.TaskDataModel
-import ru.itis.android.navigation.ViewTasksObject
-import ru.itis.android.ui.theme.MyPurple
+import ru.itis.android.navigation.TaskViewerObject
 
 @Composable
 fun MainPageScreen(
@@ -39,6 +35,8 @@ fun MainPageScreen(
     val correctionPassword = remember { mutableStateOf(true) }
     val notEmptyEmail = remember { mutableStateOf(true) }
     val notEmptyPassword = remember { mutableStateOf(true) }
+
+    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
 
     Surface (
         modifier = Modifier
@@ -75,7 +73,7 @@ fun MainPageScreen(
                     correctionEmail.value = true
                     notEmptyEmail.value = true
                 },
-                label = {Text("Email")}
+                label = {Text("Email (required)")}
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -99,7 +97,7 @@ fun MainPageScreen(
                         correctionPassword.value = true
                         notEmptyPassword.value = true
                     },
-                    label = {Text("Password")},
+                    label = {Text("Password (required)")},
                     visualTransformation = if (passwordVisible.value) {
                         VisualTransformation.None
                     } else {
@@ -140,13 +138,9 @@ fun MainPageScreen(
 
                 else {
                     navController.navigate(
-                        route = ViewTasksObject(
-                            taskTitle = userEmail.value,
-                            taskText = "task text...",
-                            taskData = TaskDataModel(
-                                taskTitle = "Task 1",
-                                taskText = "Text of task 1",
-                            )
+                        route = TaskViewerObject(
+                            userEmail = userEmail.value,
+                            arrayListOfTasks = arrayListOfTasks
                         )
                     )
                 }

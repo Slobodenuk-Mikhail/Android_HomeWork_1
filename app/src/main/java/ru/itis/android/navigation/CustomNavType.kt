@@ -2,7 +2,6 @@ package ru.itis.android.navigation
 
 import androidx.navigation.NavType
 import androidx.savedstate.SavedState
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.itis.android.model.TaskDataModel
@@ -32,6 +31,32 @@ object CustomNavType {
             bundle: SavedState,
             key: String,
             value: TaskDataModel
+        ) {
+            bundle.putString(key, Json.encodeToString(value))
+        }
+    }
+
+    val ArrayListOfTasksDataNavType = object : NavType<ArrayList<TaskDataModel>>(isNullableAllowed = true) {
+
+        override fun parseValue(value: String): ArrayList<TaskDataModel> {
+            return Json.decodeFromString(value)
+        }
+
+        override fun serializeAsValue(value: ArrayList<TaskDataModel>): String {
+            return Json.encodeToString(value)
+        }
+
+        override fun get(
+            bundle: SavedState,
+            key: String
+        ): ArrayList<TaskDataModel>? {
+            return Json.decodeFromString(bundle.getString(key) ?: return null)
+        }
+
+        override fun put(
+            bundle: SavedState,
+            key: String,
+            value: ArrayList<TaskDataModel>
         ) {
             bundle.putString(key, Json.encodeToString(value))
         }

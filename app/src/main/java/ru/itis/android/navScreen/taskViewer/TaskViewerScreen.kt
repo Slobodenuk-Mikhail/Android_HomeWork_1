@@ -17,14 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import ru.itis.android.Keys
 import ru.itis.android.model.TaskDataModel
+import ru.itis.android.navigation.TaskViewerObject
 
 @Composable
-fun ViewTasksScreen(
-    firstArg: String,
-    secondArg: String,
-    taskDataModel: TaskDataModel? = null,
+fun TaskViewerScreen(
+    userEmail: String,
+    arrayListOfTasks: ArrayList<TaskDataModel>,
     navController: NavController
 ) {
     val textToMainPage = remember { mutableStateOf("") }
@@ -34,26 +33,33 @@ fun ViewTasksScreen(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars)
         ) {
-            Text(text = firstArg)
-            Text(text = secondArg)
+            Text(text = userEmail)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+//            taskViewerDataModel?.let {
+//
+//            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = textToMainPage.value,
-                onValueChange = { imput ->
-                    textToMainPage.value = imput
+                onValueChange = { impute ->
+                    textToMainPage.value = impute
                 }
             )
 
             Button(onClick = {
-                navController
-                    .previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(Keys.ViewTasks.TEXT_FROM_TASKS_TO_MAIN_PAGE, textToMainPage)
-                navController.popBackStack()
+                navController.navigate(
+                    route = TaskViewerObject(
+                        userEmail = userEmail,
+                        arrayListOfTasks = arrayListOfTasks
+                    )
+                )
             }) {
-                Text(text = "To Main Page")
+                Text(text = "Create new task")
             }
         }
     }
