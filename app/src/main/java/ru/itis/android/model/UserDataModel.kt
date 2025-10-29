@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class TaskDataModel(
-    val taskTitle: String,
-    val taskText: String,
+data class UserDataModel(
+    val email: String,
+    val password: String
 )
