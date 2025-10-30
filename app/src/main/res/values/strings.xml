@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Android_Homework</string>
+
+    <string name="empty_line_error">Недопустима пустая строка</string>
+    <string name="email_label">Почта (обязательная строка)</string>
+    <string name="incorrect_email">Некорректная почта</string>
+    <string name="password_length_error">Минимальная длина пароля 8 символов</string>
+    <string name="password_label">Пароль (обязательная строка)</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="button_from_mainPage_to_viewer">Показать заметки</string>
+
+    <string name="title_list_of_tasks">Ваши заметки</string>
+    <string name="button_from_viewer_to_creator">Создать новую заметку</string>
+
+    <string name="title_label">Название заметки (обязательное поле)</string>
+    <string name="text_label">Описание заметки</string>
+    <string name="button_from_creator_to_viewer">Сохранить заметку</string>
+    
 </resources>

@@ -9,14 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import ru.itis.android.model.TaskDataModel
 import ru.itis.android.navScreen.taskCreator.TaskCreatorScreen
 import ru.itis.android.navScreen.taskViewer.TaskViewerScreen
-import ru.itis.android.navigation.CustomNavType
 import ru.itis.android.navigation.MainPageObject
 import ru.itis.android.navigation.TaskCreatorObject
 import ru.itis.android.navigation.TaskViewerObject
-import kotlin.reflect.typeOf
 
 class MainActivity : ComponentActivity() {
 
@@ -37,8 +34,7 @@ class MainActivity : ComponentActivity() {
                     val args = entry.toRoute<TaskViewerObject>()
                     TaskViewerScreen(
                         userEmail = args.userEmail,
-                        navController = navController
-                    )
+                        navController = navController)
                 }
                 composable<TaskCreatorObject>{ entry ->
                     TaskCreatorScreen(navController = navController)

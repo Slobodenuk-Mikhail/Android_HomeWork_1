@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
@@ -15,13 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.itis.android.Keys
+import ru.itis.android.R
 import ru.itis.android.model.TaskDataModel
 
 @Composable
@@ -36,27 +38,26 @@ fun TaskCreatorScreen(
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars)
+                .windowInsetsPadding(WindowInsets.systemBars),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Create new task",
-                Modifier.padding(10.dp))
-
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(text = if (notEntityTitle.value){
-                ""
-            } else {
-                "Недопустимая пустая строка"
-            },
+                    ""
+                } else {
+                    stringResource(R.string.empty_line_error)
+                },
                 color = Color.Red
             )
+
             OutlinedTextField(
                 value = taskTitle.value,
                 onValueChange = {impute ->
                     taskTitle.value = impute
                     notEntityTitle.value = true
                 },
-                label = {Text("Title of task (required)")}
+                label = {Text(stringResource(R.string.title_label))}
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -66,10 +67,10 @@ fun TaskCreatorScreen(
                 onValueChange = {impute ->
                     taskText.value = impute
                 },
-                label = {Text("Text of task")}
+                label = {Text(stringResource(R.string.text_label))}
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             Button(onClick = {
                 if (taskTitle.value.isEmpty()){
@@ -77,7 +78,6 @@ fun TaskCreatorScreen(
                 } else {
                     val newTask = TaskDataModel(taskTitle = taskTitle.value, taskText = taskText.value)
                     val taskJson = Json.encodeToString(newTask)
-                    println("DEBUG: Saving task: $taskJson") // ← Логируем
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.set(Keys.TaskCreator.ARRAYLIST_OF_TASKS_FROM_CREATOR_TO_VIEWER, taskJson)
@@ -85,7 +85,10 @@ fun TaskCreatorScreen(
                     navController.popBackStack()
                 }
 
-            }) {Text(text = "Save")}
+            }
+            ) {
+                Text(text = stringResource(R.string.button_from_creator_to_viewer))
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
         }

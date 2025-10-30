@@ -14,14 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ru.itis.android.model.TaskDataModel
+import ru.itis.android.R
 import ru.itis.android.navigation.TaskViewerObject
 
 @Composable
@@ -45,23 +45,20 @@ fun MainPageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             returnedText?.let {
                 Text(text = it)
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            Text(text = "Main Page")
-
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(text = if (correctionEmail.value && notEmptyEmail.value) {
                 ""
             } else if (!notEmptyEmail.value){
-                "Недопустима пустая строка"
+                stringResource(R.string.empty_line_error)
             } else {
-                "Некорректный Email"
+                stringResource(R.string.incorrect_email)
             },
                 color = Color.Red
             )
@@ -73,7 +70,7 @@ fun MainPageScreen(
                     correctionEmail.value = true
                     notEmptyEmail.value = true
                 },
-                label = {Text("Email (required)")}
+                label = {Text(stringResource(R.string.email_label))}
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -82,9 +79,9 @@ fun MainPageScreen(
                 text = if (correctionPassword.value && notEmptyPassword.value) {
                     ""
                 } else if (!notEmptyPassword.value) {
-                    "Недопустима пустая строка"
+                    stringResource(R.string.empty_line_error)
                 } else {
-                    "Минимальная длина пароля 8 символов"
+                    stringResource(R.string.password_length_error)
                 },
                 color = Color.Red
             )
@@ -97,7 +94,7 @@ fun MainPageScreen(
                         correctionPassword.value = true
                         notEmptyPassword.value = true
                     },
-                    label = {Text("Password (required)")},
+                    label = {Text(stringResource(R.string.password_label))},
                     visualTransformation = if (passwordVisible.value) {
                         VisualTransformation.None
                     } else {
@@ -110,9 +107,9 @@ fun MainPageScreen(
                     passwordVisible.value = !passwordVisible.value
                 }
                 ) {Text(text = if (passwordVisible.value) {
-                    "Скрыть пароль"
+                    stringResource(R.string.hide_password)
                 } else {
-                    "Показать пароль"
+                    stringResource(R.string.show_password)
                 })}
             }
 
@@ -144,7 +141,7 @@ fun MainPageScreen(
                     )
                 }
             }) {
-                Text(text= "Show Tasks")
+                Text(text= stringResource(R.string.button_from_mainPage_to_viewer))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
