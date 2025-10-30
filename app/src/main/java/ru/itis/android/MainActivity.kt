@@ -33,27 +33,15 @@ class MainActivity : ComponentActivity() {
                 composable<MainPageObject>{
                     MainPageScreen(navController = navController)
                 }
-                composable<TaskViewerObject>(
-                    typeMap = mapOf(
-                        typeOf<ArrayList<TaskDataModel>>() to CustomNavType.ArrayListOfTasksDataNavType
-                    )
-                ){ entry ->
+                composable<TaskViewerObject> { entry ->
                     val args = entry.toRoute<TaskViewerObject>()
                     TaskViewerScreen(
                         userEmail = args.userEmail,
                         navController = navController
                     )
                 }
-                composable<TaskCreatorObject>(
-                    typeMap = mapOf(
-                        typeOf<ArrayList<TaskDataModel>>() to CustomNavType.ArrayListOfTasksDataNavType
-                    )
-                ) { entry ->
-                    val args = entry.toRoute<TaskCreatorObject>()
-                    TaskCreatorScreen(
-                        arrayListOfTasks = args.arrayListOfTasks,
-                        navController = navController
-                    )
+                composable<TaskCreatorObject>{ entry ->
+                    TaskCreatorScreen(navController = navController)
                 }
             }
         }

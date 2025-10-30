@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ru.itis.android.Keys
 import ru.itis.android.model.TaskDataModel
 
 @Composable
 fun TaskCreatorScreen(
-    arrayListOfTasks: ArrayList<TaskDataModel>,
     navController: NavController
 ){
     val taskTitle = remember { mutableStateOf("") }
@@ -74,11 +75,13 @@ fun TaskCreatorScreen(
                 if (taskTitle.value.isEmpty()){
                     notEntityTitle.value = false
                 } else {
-                    arrayListOfTasks.add(TaskDataModel(taskTitle.value, taskText.value))
-                    navController
-                        .previousBackStackEntry
+                    val newTask = TaskDataModel(taskTitle = taskTitle.value, taskText = taskText.value)
+                    val taskJson = Json.encodeToString(newTask)
+                    println("DEBUG: Saving task: $taskJson") // ← Логируем
+                    navController.previousBackStackEntry
                         ?.savedStateHandle
-                        ?.set(Keys.TaskCreator.ARRAYLIST_OF_TASKS_FROM_CREATOR_TO_VIEWER, arrayListOfTasks)
+                        ?.set(Keys.TaskCreator.ARRAYLIST_OF_TASKS_FROM_CREATOR_TO_VIEWER, taskJson)
+
                     navController.popBackStack()
                 }
 

@@ -1,6 +1,7 @@
 package ru.itis.android.navigation
 
 import android.os.Bundle
+import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation.NavType
 import androidx.savedstate.SavedState
 import kotlinx.serialization.encodeToString
@@ -62,4 +63,21 @@ object CustomNavType {
             bundle.putString(key, Json.encodeToString(value))
         }
     }
+
+    val TaskListSaver = androidx.compose.runtime.saveable.Saver<
+            MutableList<TaskDataModel>,
+            String
+            >(
+        save = { list ->
+            // Используем твою готовую логику сериализации
+            ArrayListOfTasksDataNavType.serializeAsValue(ArrayList(list))
+        },
+        restore = { saved ->
+            // Используем твою готовую логику десериализации
+            val arrayList = ArrayListOfTasksDataNavType.parseValue(saved)
+            mutableStateListOf<TaskDataModel>().apply {
+                addAll(arrayList)
+            }
+        }
+    )
 }

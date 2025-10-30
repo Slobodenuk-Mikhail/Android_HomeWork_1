@@ -12,9 +12,7 @@ data object MainPageObject
 //data object ViewTasksScreenObject
 
 @Serializable
-data class TaskCreatorObject(
-    val arrayListOfTasks: ArrayList<TaskDataModel>
-)
+data object TaskCreatorObject
 
 @Serializable
 data class TaskViewerObject(
