@@ -41,8 +41,7 @@ class MainActivity : ComponentActivity() {
                     val args = entry.toRoute<TaskViewerObject>()
                     TaskViewerScreen(
                         userEmail = args.userEmail,
-                        arrayListOfTasks = args.arrayListOfTasks,
-                        navController = navController,
+                        navController = navController
                     )
                 }
                 composable<TaskCreatorObject>(
@@ -50,9 +49,8 @@ class MainActivity : ComponentActivity() {
                         typeOf<ArrayList<TaskDataModel>>() to CustomNavType.ArrayListOfTasksDataNavType
                     )
                 ) { entry ->
-                    val args = entry.toRoute< TaskCreatorObject>()
+                    val args = entry.toRoute<TaskCreatorObject>()
                     TaskCreatorScreen(
-                        userEmail = args.userEmail,
                         arrayListOfTasks = args.arrayListOfTasks,
                         navController = navController
                     )
@@ -61,7 +59,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private companion object {
-        const val LOG_TAG = "MainActivity"
-    }
 }

@@ -36,8 +36,6 @@ fun MainPageScreen(
     val notEmptyEmail = remember { mutableStateOf(true) }
     val notEmptyPassword = remember { mutableStateOf(true) }
 
-    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
-
     Surface (
         modifier = Modifier
             .fillMaxSize(),
@@ -139,8 +137,7 @@ fun MainPageScreen(
                 else {
                     navController.navigate(
                         route = TaskViewerObject(
-                            userEmail = userEmail.value,
-                            arrayListOfTasks = arrayListOfTasks
+                            userEmail = userEmail.value
                         )
                     )
                 }

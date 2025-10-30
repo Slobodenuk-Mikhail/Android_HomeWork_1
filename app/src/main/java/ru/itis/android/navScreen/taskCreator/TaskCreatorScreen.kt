@@ -24,7 +24,6 @@ import ru.itis.android.model.TaskDataModel
 
 @Composable
 fun TaskCreatorScreen(
-    userEmail: String,
     arrayListOfTasks: ArrayList<TaskDataModel>,
     navController: NavController
 ){
@@ -43,7 +42,11 @@ fun TaskCreatorScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text(text = "Здесь будет ошибка",
+            Text(text = if (notEntityTitle.value){
+                ""
+            } else {
+                "Недопустимая пустая строка"
+            },
                 color = Color.Red
             )
             OutlinedTextField(
@@ -68,12 +71,17 @@ fun TaskCreatorScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(onClick = {
-                navController
-                    .previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(Keys.ViewTasks.TITLE_FROM_CREATOR_TO_VIEWER, taskTitle)
-//                    ?.set(Keys.ViewTasks.TEXT_FROM_CREATOR_TO_VIEWER, taskText)
-                navController.popBackStack()
+                if (taskTitle.value.isEmpty()){
+                    notEntityTitle.value = false
+                } else {
+                    arrayListOfTasks.add(TaskDataModel(taskTitle.value, taskText.value))
+                    navController
+                        .previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(Keys.TaskCreator.ARRAYLIST_OF_TASKS_FROM_CREATOR_TO_VIEWER, arrayListOfTasks)
+                    navController.popBackStack()
+                }
+
             }) {Text(text = "Save")}
 
             Spacer(modifier = Modifier.height(16.dp))

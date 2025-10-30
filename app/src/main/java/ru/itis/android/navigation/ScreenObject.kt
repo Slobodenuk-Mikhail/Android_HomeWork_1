@@ -13,12 +13,10 @@ data object MainPageObject
 
 @Serializable
 data class TaskCreatorObject(
-    val userEmail: String,
-    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
+    val arrayListOfTasks: ArrayList<TaskDataModel>
 )
 
 @Serializable
 data class TaskViewerObject(
-    val userEmail: String,
-    val arrayListOfTasks: ArrayList<TaskDataModel> = ArrayList()
+    val userEmail: String
 )

@@ -1,5 +1,6 @@
 package ru.itis.android.navigation
 
+import android.os.Bundle
 import androidx.navigation.NavType
 import androidx.savedstate.SavedState
 import kotlinx.serialization.encodeToString
@@ -47,14 +48,14 @@ object CustomNavType {
         }
 
         override fun get(
-            bundle: SavedState,
+            bundle: Bundle,
             key: String
         ): ArrayList<TaskDataModel>? {
             return Json.decodeFromString(bundle.getString(key) ?: return null)
         }
 
         override fun put(
-            bundle: SavedState,
+            bundle: Bundle,
             key: String,
             value: ArrayList<TaskDataModel>
         ) {
