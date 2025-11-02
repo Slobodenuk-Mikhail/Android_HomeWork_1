@@ -22,12 +22,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.itis.android.R
+import ru.itis.android.model.NotificationModel
 import ru.itis.android.navigation.TaskViewerObject
+import ru.itis.android.utils.NotificationHandler
+import kotlin.random.Random
 
 @Composable
 fun MainPageScreen(
     navController: NavHostController,
     returnedText: String? = null,
+    onButtonClick: (NotificationModel) -> Unit
 ) {
     val userEmail = remember { mutableStateOf("") }
     val userPassword = remember { mutableStateOf("") }
@@ -118,28 +122,36 @@ fun MainPageScreen(
 
 
             Button(onClick = {
-                if(userEmail.value.isEmpty() || userPassword.value.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(userEmail.value).matches() || userPassword.value.length < 8){
-                    if (userEmail.value.isEmpty()) {
-                        notEmptyEmail.value = false
-                    }
-                    if (userPassword.value.isEmpty()){
-                        notEmptyPassword.value = false
-                    }
-                    if (!Patterns.EMAIL_ADDRESS.matcher(userEmail.value).matches()){
-                        correctionEmail.value = false
-                    }
-                    if (userPassword.value.isEmpty() || userPassword.value.length < 8) {
-                        correctionPassword.value = false
-                    }
-                }
+//                if(userEmail.value.isEmpty() || userPassword.value.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(userEmail.value).matches() || userPassword.value.length < 8){
+//                    if (userEmail.value.isEmpty()) {
+//                        notEmptyEmail.value = false
+//                    }
+//                    if (userPassword.value.isEmpty()){
+//                        notEmptyPassword.value = false
+//                    }
+//                    if (!Patterns.EMAIL_ADDRESS.matcher(userEmail.value).matches()){
+//                        correctionEmail.value = false
+//                    }
+//                    if (userPassword.value.isEmpty() || userPassword.value.length < 8) {
+//                        correctionPassword.value = false
+//                    }
+//                }
+//
+//                else {
+//                    navController.navigate(
+//                        route = TaskViewerObject(
+//                            userEmail = userEmail.value
+//                        )
+//                    )
+//                }
 
-                else {
-                    navController.navigate(
-                        route = TaskViewerObject(
-                            userEmail = userEmail.value
-                        )
+                onButtonClick.invoke(
+                    NotificationModel(
+                        id = Random.nextInt(0, 100),
+                        title = "Sample title",
+                        content = "Sample context"
                     )
-                }
+                )
             }) {
                 Text(text= stringResource(R.string.button_from_mainPage_to_viewer))
             }
