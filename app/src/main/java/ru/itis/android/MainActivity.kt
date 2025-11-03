@@ -2,17 +2,35 @@ package ru.itis.android
 
 import MainPageScreen
 import android.Manifest
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import ru.itis.android.model.BottomNavTabs
+import ru.itis.android.model.NotificationModel
+import ru.itis.android.model.SampleReceiver
 import ru.itis.android.navScreen.taskCreator.TaskCreatorScreen
 import ru.itis.android.navScreen.taskViewer.TaskViewerScreen
 import ru.itis.android.navigation.MainPageObject
@@ -20,6 +38,7 @@ import ru.itis.android.navigation.TaskCreatorObject
 import ru.itis.android.navigation.TaskViewerObject
 import ru.itis.android.utils.NotificationHandler
 import ru.itis.android.utils.PermissionHandler
+import ru.itis.android.utils.ResManager
 
 class MainActivity : ComponentActivity() {
 
@@ -29,20 +48,31 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (permissionsHandler == null) {
-            permissionsHandler = PermissionHandler(
-                onPermissionGranted = {}, onPermissionDenied = {}, activity = this
-            )
+
+        intent?.extras?.getString(Keys.INTENT_KEY)?.let {
+            Toast.makeText(this, "String received: $it", Toast.LENGTH_SHORT).show()
+        } ?: println("TEST TAG - Clean start")
+
+        intent?.extras?.getInt(Keys.EXTRA_PAYLOAD_KEY)?.let {
+            Toast.makeText(this, "Extra payload: $it", Toast.LENGTH_SHORT).show()
         }
+
+        permissionsHandler = PermissionHandler(onPermissionGranted = {}, onPermissionDenied = {}, activity = this)
+        val resManager = ResManager(ctx = applicationContext)
+
 
 
         if (notificationHandler == null) {
-            notificationHandler = NotificationHandler(ctx = applicationContext)
+            notificationHandler = NotificationHandler(ctx = applicationContext, resManager = resManager)
         }
+
+        val receiver = SampleReceiver()
+        registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.POST_NOTIFICATIONS
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
                 ){
                 permissionsHandler?.requestMultiplePermission(
@@ -53,30 +83,93 @@ class MainActivity : ComponentActivity() {
             }
 
         }
-        setContent {
-            val navController = rememberNavController()
-            NavHost(
-                navController = navController,
-                startDestination = MainPageObject
-            ) {
-                composable<MainPageObject>{
-                    MainPageScreen(
-                        navController = navController,
-                        onButtonClick = { dataModel ->
-                            notificationHandler?.showNotification(dataModel)
 
+        setContent {
+//            val navController = rememberNavController()
+//
+//            NavHost(
+//                navController = navController,
+//                startDestination = MainPageObject
+//            ) {
+//
+//                composable<MainPageObject>{
+//                    MainPageScreen(
+//                        navController = navController,
+//                        onButtonClick = { dataModel ->
+//                            notificationHandler?.showNotification(dataModel)
+//
+//                        }
+//                    )
+//                }
+//
+//                composable<TaskViewerObject> { entry ->
+//                    val args = entry.toRoute<TaskViewerObject>()
+//                    TaskViewerScreen(
+//                        userEmail = args.userEmail,
+//                        navController = navController)
+//                }
+//
+//                composable<TaskCreatorObject>{ entry ->
+//                    TaskCreatorScreen(navController = navController)
+//                }
+//
+//            }
+
+            val navController = rememberNavController()
+            val selectedTab = rememberSaveable { mutableIntStateOf(value = 0) }
+
+
+            Scaffold(
+                bottomBar = {
+                    NavigationBar(
+                        windowInsets = NavigationBarDefaults.windowInsets
+                    ) {
+                        BottomNavTabs.entries.forEachIndexed { index, destination ->
+                            NavigationBarItem(
+                                selected = selectedTab.intValue == index,
+                                onClick = {
+                                    selectedTab.intValue = index
+                                    navController.navigate(destination.route)
+                                },
+                                icon = {
+                                    Image(
+                                        imageVector = destination.icon,
+                                        contentDescription = destination.contentDescription
+                                    )
+                                },
+                                        label = {
+                                            Text(text = destination.label)
+                                        },
+                            )
                         }
-                    )
+                    }
                 }
-                composable<TaskViewerObject> { entry ->
-                    val args = entry.toRoute<TaskViewerObject>()
-                    TaskViewerScreen(
-                        userEmail = args.userEmail,
-                        navController = navController)
+            ) { paddings ->
+
+                NavHost(
+                    navController = navController,
+                    startDestination = MainPageObject
+                ) {
+
+                    composable<MainPageObject> {
+                        MainPageScreen(
+                            navController = navController,
+                            onButtonClick = { dataModel ->
+                                notificationHandler?.showNotification(dataModel)
+                            }
+                        )
+                    }
+
+                    composable<TaskViewerObject> {
+                        TaskViewerScreen(navController = navController)
+                    }
+
+                    composable<TaskCreatorObject> {
+                        TaskCreatorScreen(navController = navController)
+                    }
+
                 }
-                composable<TaskCreatorObject>{ entry ->
-                    TaskCreatorScreen(navController = navController)
-                }
+
             }
         }
     }

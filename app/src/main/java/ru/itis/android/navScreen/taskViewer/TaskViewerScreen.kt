@@ -41,7 +41,7 @@ fun Task(
 
 @Composable
 fun TaskViewerScreen(
-    userEmail: String,
+//    userEmail: String,
     navController: NavController
 ) {
     val tasks = rememberSaveable(
@@ -64,7 +64,7 @@ fun TaskViewerScreen(
                 .windowInsetsPadding(WindowInsets.systemBars),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = userEmail, fontSize = 24.sp)
+//            Text(text = userEmail, fontSize = 24.sp)
 
             Spacer(modifier = Modifier.height(40.dp))
 

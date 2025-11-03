@@ -11,9 +11,11 @@ object Keys {
 
     }
 
-
     object TaskCreator {
         const val EMAIL_FROM_CREATOR_TO_VIEWER = "email_from_creator_to_viewer"
         const val ARRAYLIST_OF_TASKS_FROM_CREATOR_TO_VIEWER = "arraylist_of_tasks_from_creator_to_viewer"
     }
+
+    const val INTENT_KEY = "intent_sample_key"
+    const val EXTRA_PAYLOAD_KEY = "intent_extra_payload"
 }

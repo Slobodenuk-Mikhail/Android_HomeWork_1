@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,8 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.itis.android.R
 import ru.itis.android.model.NotificationModel
-import ru.itis.android.navigation.TaskViewerObject
-import ru.itis.android.utils.NotificationHandler
 import kotlin.random.Random
 
 @Composable
@@ -118,7 +117,7 @@ fun MainPageScreen(
             }
 
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(50.dp))
 
 
             Button(onClick = {
@@ -155,7 +154,16 @@ fun MainPageScreen(
             }) {
                 Text(text= stringResource(R.string.button_from_mainPage_to_viewer))
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(25.dp))
+
+            val isChacked = remember { mutableStateOf(false) }
+            Switch(
+                checked = isChacked.value,
+                onCheckedChange = {input ->
+                    isChacked.value = input
+                    println("TEST TAG: status - ${isChacked.value}")
+                }
+            )
         }
     }
 }
