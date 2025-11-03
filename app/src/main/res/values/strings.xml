@@ -33,6 +33,13 @@
     <string name="users_messages_label">Сообщения пользователя</string>
     <!-- Bottom Navigation END-->
 
+    <!-- Dropdown notification priority -->
+    <string name="low_priority_displayName">Низкий</string>
+    <string name="medium_priority_displayName">Средний</string>
+    <string name="high_priority_displayName">Высокий</string>
+    <string name="urgent_priority_displayName">Срочный</string>
+    <!-- Dropdown notification priority END-->
+
     <!-- System settings -->
     <string name="go_back_button">Назад</string>
     <string name="notification_channel_default">Стандартный канал уведомлений</string>

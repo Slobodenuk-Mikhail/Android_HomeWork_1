@@ -1,6 +1,6 @@
 package ru.itis.android
 
-import MainPageScreen
+import NotifSettingsScreen
 import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
@@ -12,30 +12,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import ru.itis.android.model.BottomNavTabs
-import ru.itis.android.model.NotificationModel
 import ru.itis.android.model.SampleReceiver
-import ru.itis.android.navScreen.taskCreator.TaskCreatorScreen
-import ru.itis.android.navScreen.taskViewer.TaskViewerScreen
-import ru.itis.android.navigation.MainPageObject
-import ru.itis.android.navigation.TaskCreatorObject
-import ru.itis.android.navigation.TaskViewerObject
+import ru.itis.android.navScreen.taskCreator.UsersMessagesScreen
+import ru.itis.android.navScreen.taskViewer.NotifEditorScreen
+import ru.itis.android.navigation.NotifEditorObject
+import ru.itis.android.navigation.NotifSettingsObject
+import ru.itis.android.navigation.UsersMessagesObject
 import ru.itis.android.utils.NotificationHandler
 import ru.itis.android.utils.PermissionHandler
 import ru.itis.android.utils.ResManager
@@ -44,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private var permissionsHandler: PermissionHandler?= null
     private var notificationHandler: NotificationHandler? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,27 +140,25 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             ) { paddings ->
-
                 NavHost(
                     navController = navController,
-                    startDestination = MainPageObject
+                    startDestination = NotifSettingsObject
                 ) {
 
-                    composable<MainPageObject> {
-                        MainPageScreen(
-                            navController = navController,
+                    composable<NotifSettingsObject> {
+                        NotifSettingsScreen (
                             onButtonClick = { dataModel ->
                                 notificationHandler?.showNotification(dataModel)
                             }
                         )
                     }
 
-                    composable<TaskViewerObject> {
-                        TaskViewerScreen(navController = navController)
+                    composable<NotifEditorObject> {
+                        NotifEditorScreen()
                     }
 
-                    composable<TaskCreatorObject> {
-                        TaskCreatorScreen(navController = navController)
+                    composable<UsersMessagesObject> {
+                        UsersMessagesScreen()
                     }
 
                 }
