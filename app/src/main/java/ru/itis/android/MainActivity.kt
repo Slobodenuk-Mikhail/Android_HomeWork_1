@@ -24,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.itis.android.model.BottomNavTabs
+import ru.itis.android.model.ReplyReceiver
 import ru.itis.android.model.SampleReceiver
 import ru.itis.android.navScreen.taskCreator.UsersMessagesScreen
 import ru.itis.android.navScreen.taskViewer.NotifEditorScreen
@@ -44,13 +45,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        intent?.extras?.getString(Keys.INTENT_KEY)?.let {
-            Toast.makeText(this, "String received: $it", Toast.LENGTH_SHORT).show()
-        } ?: println("TEST TAG - Clean start")
-
-        intent?.extras?.getInt(Keys.EXTRA_PAYLOAD_KEY)?.let {
-            Toast.makeText(this, "Extra payload: $it", Toast.LENGTH_SHORT).show()
-        }
+        handleNotificationData(intent)
+//        intent?.extras?.getString(Keys.INTENT_KEY)?.let {
+//            Toast.makeText(this, "String received: $it", Toast.LENGTH_SHORT).show()
+//        } ?: println("TEST TAG - Clean start")
+//
+//        intent?.extras?.getInt(Keys.EXTRA_PAYLOAD_KEY)?.let {
+//            Toast.makeText(this, "Extra payload: $it", Toast.LENGTH_SHORT).show()
+//        }
 
         permissionsHandler = PermissionHandler(onPermissionGranted = {}, onPermissionDenied = {}, activity = this)
         val resManager = ResManager(ctx = applicationContext)
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
 
         if (notificationHandler == null) {
             notificationHandler = NotificationHandler(ctx = applicationContext, resManager = resManager)
+            notificationHandler?.initNotificationChannel()
         }
 
         val receiver = SampleReceiver()
@@ -147,8 +150,13 @@ class MainActivity : ComponentActivity() {
 
                     composable<NotifSettingsObject> {
                         NotifSettingsScreen (
-                            onButtonClick = { dataModel ->
-                                notificationHandler?.showNotification(dataModel)
+                            onButtonClick = { dataModel, isOpenedText, isClichedToMainActivity, isAnswering ->
+                                notificationHandler?.showNotification(
+                                    dataModel,
+                                    isOpenedText,
+                                    isClichedToMainActivity,
+                                    isAnswering
+                                )
                             }
                         )
                     }
@@ -164,6 +172,24 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+        }
+    }
+
+
+    private fun handleNotificationData(intent: Intent?) {
+        val title = intent?.getStringExtra(Keys.NOTIFICATION_TITLE)
+        val content = intent?.getStringExtra(Keys.NOTIFICATION_CONTENT)
+
+        if (title != null) {
+            val message = buildString {
+                append("Уведомление: $title")
+                if (!content.isNullOrEmpty()) {
+                    append("\n$content")
+                }
+            }
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            println("TEST TAG - Notification opened: $title")
         }
     }
 

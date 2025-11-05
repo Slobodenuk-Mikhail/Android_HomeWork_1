@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Android_Homework</string>
 
-    <!-- Main Page Screen -->
+    <!-- Settings Screen -->
     <string name="empty_line_error">Недопустима пустая строка</string>
     <string name="email_label">Почта (обязательная строка)</string>
     <string name="incorrect_email">Некорректная почта</string>
@@ -10,24 +10,24 @@
     <string name="hide_password">Скрыть пароль</string>
     <string name="show_password">Показать пароль</string>
     <string name="button_from_mainPage_to_viewer">Показать заметки</string>
-    <!-- Main Page Screen END-->
 
-    <!-- Viewer Screen -->
+    <string name="switch_isOpeningText">Раскрывающийся текст</string>
+    <string name="switch_isClickingToMainActivity">По нажатию переход на Main Activity</string>
+    <string name="switch_isAnswering">Строка ответа</string>
+    <!-- Settings Screen END-->
+
+    <!-- Editor Screen -->
     <string name="title_list_of_tasks">Ваши заметки</string>
     <string name="button_from_viewer_to_creator">Создать новую заметку</string>
-    <!-- Viewer Screen END-->
+    <!-- Editor Screen END-->
 
-    <!-- Viewer Screen -->
+    <!-- Messages Screen -->
     <string name="title_label">Название заметки (обязательное поле)</string>
     <string name="text_label">Описание заметки</string>
     <string name="button_from_creator_to_viewer">Сохранить заметку</string>
-    <!-- Viewer Screen END-->
+    <!-- Messages Screen END-->
 
     <!-- Bottom Navigation -->
-    <string name="notif_settings_roure">notif_settings_roure</string>
-    <string name="notif_editor_roure">Редактор уведомлений</string>
-    <string name="users_messages_roure">Сообщения пользователя</string>
-
     <string name="notif_settings_label">Настройки уведомлений</string>
     <string name="notif_editor_label">Редактор уведомлений</string>
     <string name="users_messages_label">Сообщения пользователя</string>

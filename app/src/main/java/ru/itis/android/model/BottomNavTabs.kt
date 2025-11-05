@@ -19,7 +19,7 @@ enum class BottomNavTabs(
     val icon: ImageVector,
     val contentDescription: String? = null
 ) {
-    //hard code, need to redone
+    //hard code, need to redo
     NotificationsSettings(
         route = NotifSettingsObject,
         label = "Settings",

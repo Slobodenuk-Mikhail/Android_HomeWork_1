@@ -22,7 +22,15 @@
             </intent-filter>
         </activity>
 
-
+        <receiver
+            android:name=".model.ReplyReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.REPLY" />
+                <action android:name="ru.itis.android.ACTION_REPLY" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
