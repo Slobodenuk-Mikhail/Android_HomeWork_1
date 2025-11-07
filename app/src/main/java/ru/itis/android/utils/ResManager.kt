@@ -10,7 +10,7 @@ class ResManager(
         return ctx.getString(stringRes)
     }
 
-    fun getStringPattern(@StringRes stringRes: Int, vararg args: Any): String {
-        return ctx.getString(stringRes, args)
+    fun getString(@StringRes resId: Int, vararg formatArgs: Any): String {
+        return ctx.getString(resId, *formatArgs)
     }
 }

@@ -62,10 +62,8 @@ fun NotifSettingsScreen(
             Text(
                 text = if (notEmptyTitle.value) {
                     ""
-                } else if (!notEmptyTitle.value) {
-                    stringResource(R.string.empty_line_error)
                 } else {
-                    stringResource(R.string.incorrect_email)
+                    stringResource(R.string.title_line_error)
                 },
                 color = Color.Red
             )
@@ -76,7 +74,7 @@ fun NotifSettingsScreen(
                     notifTitle.value = input
                     notEmptyTitle.value = true
                 },
-                label = { Text(stringResource(R.string.email_label)) }
+                label = { Text(stringResource(R.string.title_label)) }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -99,7 +97,6 @@ fun NotifSettingsScreen(
                 onCheckedChange = { input ->
                     if (notifText.value.isNotEmpty() || isOpenedText){
                         isOpenedText = input
-                        println("TEST TAG: status - ${isOpenedText}")
                     }
 
                 }

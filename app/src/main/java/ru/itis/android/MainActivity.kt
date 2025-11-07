@@ -7,11 +7,14 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
@@ -24,7 +27,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.itis.android.model.BottomNavTabs
-import ru.itis.android.model.ReplyReceiver
 import ru.itis.android.model.SampleReceiver
 import ru.itis.android.navScreen.taskCreator.UsersMessagesScreen
 import ru.itis.android.navScreen.taskViewer.NotifEditorScreen
@@ -37,22 +39,15 @@ import ru.itis.android.utils.ResManager
 
 class MainActivity : ComponentActivity() {
 
+
     private var permissionsHandler: PermissionHandler?= null
     private var notificationHandler: NotificationHandler? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        handleNotificationData(intent)
-//        intent?.extras?.getString(Keys.INTENT_KEY)?.let {
-//            Toast.makeText(this, "String received: $it", Toast.LENGTH_SHORT).show()
-//        } ?: println("TEST TAG - Clean start")
-//
-//        intent?.extras?.getInt(Keys.EXTRA_PAYLOAD_KEY)?.let {
-//            Toast.makeText(this, "Extra payload: $it", Toast.LENGTH_SHORT).show()
-//        }
 
         permissionsHandler = PermissionHandler(onPermissionGranted = {}, onPermissionDenied = {}, activity = this)
         val resManager = ResManager(ctx = applicationContext)
@@ -76,42 +71,11 @@ class MainActivity : ComponentActivity() {
                 permissionsHandler?.requestMultiplePermission(
                     permission = listOf(Manifest.permission.POST_NOTIFICATIONS)
                 )
-            } else {
-
             }
-
         }
 
+
         setContent {
-//            val navController = rememberNavController()
-//
-//            NavHost(
-//                navController = navController,
-//                startDestination = MainPageObject
-//            ) {
-//
-//                composable<MainPageObject>{
-//                    MainPageScreen(
-//                        navController = navController,
-//                        onButtonClick = { dataModel ->
-//                            notificationHandler?.showNotification(dataModel)
-//
-//                        }
-//                    )
-//                }
-//
-//                composable<TaskViewerObject> { entry ->
-//                    val args = entry.toRoute<TaskViewerObject>()
-//                    TaskViewerScreen(
-//                        userEmail = args.userEmail,
-//                        navController = navController)
-//                }
-//
-//                composable<TaskCreatorObject>{ entry ->
-//                    TaskCreatorScreen(navController = navController)
-//                }
-//
-//            }
 
             val navController = rememberNavController()
             val selectedTab = rememberSaveable { mutableIntStateOf(value = 0) }
@@ -122,7 +86,7 @@ class MainActivity : ComponentActivity() {
                     NavigationBar(
                         windowInsets = NavigationBarDefaults.windowInsets
                     ) {
-                        BottomNavTabs.entries.forEachIndexed { index, destination ->
+                        getBottomNavTabs(resManager).forEachIndexed { index, destination ->
                             NavigationBarItem(
                                 selected = selectedTab.intValue == index,
                                 onClick = {
@@ -175,22 +139,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun getBottomNavTabs(resManager: ResManager): List<BottomNavTabs> = listOf(
 
-    private fun handleNotificationData(intent: Intent?) {
-        val title = intent?.getStringExtra(Keys.NOTIFICATION_TITLE)
-        val content = intent?.getStringExtra(Keys.NOTIFICATION_CONTENT)
+        BottomNavTabs(
+            route = NotifSettingsObject,
+            label = resManager.getString(R.string.notif_settings_label),
+            icon = Icons.Default.Settings,
+        ),
+        BottomNavTabs(
+            route = NotifEditorObject,
+            label = resManager.getString(R.string.notif_editor_label),
+            icon = Icons.Default.Edit
+        ),
+        BottomNavTabs(
+            route = UsersMessagesObject,
+            label = resManager.getString(R.string.users_messages_label),
+            icon = Icons.Default.MailOutline
+        )
+    )
 
-        if (title != null) {
-            val message = buildString {
-                append("Уведомление: $title")
-                if (!content.isNullOrEmpty()) {
-                    append("\n$content")
-                }
-            }
-
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            println("TEST TAG - Notification opened: $title")
-        }
-    }
 
 }

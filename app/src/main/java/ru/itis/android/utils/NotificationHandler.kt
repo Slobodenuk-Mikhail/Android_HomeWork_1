@@ -2,13 +2,11 @@ package ru.itis.android.utils
 
 import android.content.Context
 import android.app.NotificationChannel
-import android.app.NotificationChannel.DEFAULT_CHANNEL_ID
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.ui.input.key.Key
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import ru.itis.android.Keys
@@ -29,9 +27,7 @@ class NotificationHandler(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannelIfNeeded()
             isChannelInitialized = true
-            println("TEST TAG: Notification channels initialized")
         } else {
-            println("TEST TAG: Notification channels not needed (Android < 8.0)")
             isChannelInitialized = true
         }
     }
@@ -46,7 +42,6 @@ class NotificationHandler(
     ) {
 
         if (!isChannelInitialized) {
-            println("TEST TAG: WARNING - Notification channels not initialized! Calling init...")
             initNotificationChannel()
         }
 
@@ -68,7 +63,7 @@ class NotificationHandler(
         }
 
         val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isChannelInitialized){
-            DEFAULT_CHANNEL_ID
+            Keys.DEFAULT_CHANNEL_ID
         } else {
             null
         }
@@ -106,8 +101,10 @@ class NotificationHandler(
         messageData.content?.let(builder::setContentText)
 
         notificationManager.notify(messageData.id, builder.build())
+        println("TEST TAG: Create NOTIF ID: ${messageData.id}")
 
     }
+
 
     private fun addReplyAction(
         builder: NotificationCompat.Builder,
@@ -115,7 +112,7 @@ class NotificationHandler(
         notificationId: Int
     ) {
         val remoteInput = RemoteInput.Builder(Keys.KEY_REPLY)
-            .setLabel("Введите ваш ответ...")
+            .setLabel(resManager.getString(R.string.remote_input_label))
             .build()
 
         val replyIntent = Intent(ctx, ReplyReceiver::class.java).apply {
@@ -149,22 +146,20 @@ class NotificationHandler(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val replyAction = NotificationCompat.Action.Builder(
                 R.drawable.ic_outline_reply_24,
-                "Ответить",
+                resManager.getString(R.string.reply_action_title),
                 replyPendingIntent
             ).addRemoteInput(remoteInput)
                 .build()
             builder.addAction(replyAction)
-            println("TEST TAG: Reply action added (Android 7.0+)")
 
         } else {
             val fallbackAction = NotificationCompat.Action.Builder(
                 R.drawable.ic_outline_reply_24,
-                "Открыть приложение",
+                resManager.getString(R.string.fallback_title),
                 replyPendingIntent
             ).build()
 
             builder.addAction(fallbackAction)
-            println("TEST TAG: Fallback action added (Android < 7.0)")
         }
     }
 
@@ -173,16 +168,11 @@ class NotificationHandler(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannelIfNeeded() {
         val channel = NotificationChannel(
-            DEFAULT_CHANNEL_ID,
+            Keys.DEFAULT_CHANNEL_ID,
             resManager.getString(R.string.notification_channel_default),
             NotificationManager.IMPORTANCE_HIGH
         )
 
         notificationManager.createNotificationChannel(channel)
-    }
-
-
-    private companion object {
-        const val DEFAULT_CHANNEL_ID = "itis_default_channel_id"
     }
 }

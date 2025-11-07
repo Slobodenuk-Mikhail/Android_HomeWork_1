@@ -4,14 +4,12 @@ import android.app.RemoteInput
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import ru.itis.android.Keys
 import ru.itis.android.MessagesRepository
 
 class ReplyReceiver : BroadcastReceiver() {
 
     override fun onReceive(ctx: Context?, intent: Intent?) {
-        println("TEST TAG - ReplyReceiver called")
 
         ctx?.let { ctx ->
             val replyText = getReplyText(intent)
@@ -25,8 +23,6 @@ class ReplyReceiver : BroadcastReceiver() {
                     text = originalText,
                     answer = replyText
                 )
-                Toast.makeText(ctx, "Ответ сохранен!", Toast.LENGTH_SHORT).show()
-                println("TEST TAG - Reply saved successfully")
             }
 
             val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
@@ -34,10 +30,8 @@ class ReplyReceiver : BroadcastReceiver() {
 
             if (notificationId != -1) {
                 notificationManager.cancel(notificationId)
-                println("TEST TAG - Canceled notification with ID: $notificationId")
             }
 
-            println("TEST TAG - Reply saved: '$replyText' for notification: $notificationId")
         }
     }
 
