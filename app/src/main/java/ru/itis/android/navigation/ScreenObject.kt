@@ -3,12 +3,10 @@ package ru.itis.android.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object MainPageObject
+data object NotifSettingsObject
 
 @Serializable
-data object TaskCreatorObject
+data object UsersMessagesObject
 
 @Serializable
-data class TaskViewerObject(
-    val userEmail: String
-)
+data object NotifEditorObject
