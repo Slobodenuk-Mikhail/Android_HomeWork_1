@@ -1,71 +1,33 @@
 <resources>
     <string name="app_name">Android_Homework</string>
 
-    <!-- Settings Screen -->
-    <string name="title_line_error">Недопустима пустая строка</string>
-    <string name="title_label">Заголовок уведомления (обязательная строка)</string>
-    <string name="password_label">Текст уведомления</string>
-    <string name="button_from_mainPage_to_viewer">Создать уведомление</string>
-
-    <string name="switch_isOpeningText">Раскрывающийся текст</string>
-    <string name="switch_isClickingToMainActivity">По нажатию переход на Main Activity</string>
-    <string name="switch_isAnswering">Строка ответа</string>
-    <!-- Settings Screen END -->
-
-    <!-- Notification editor -->
-    <string name="id_label">ID уведомления</string>
-    <string name="new_text_label">Новый текст уведомления</string>
-    <string name="button_update_notification">Обновить текст уведомления</string>
-    <string name="button_delete_all_notifications">Удалить все уведомления</string>
-
-    <!-- Toasts -->
-    <string name="toast_enter_id">Введите ID уведомления</string>
-    <string name="toast_enter_new_text">Введите новый текст уведомления</string>
-    <string name="toast_not_right_id">ID должен быть числом</string>
-    <string name="toast_not_find_notification_by_id">Уведомление с ID %1$d не найдено</string>
-    <string name="toast_no_active_notifications">Нет активных уведомлений</string>
-    <string name="toast_update_success">Текст уведомления %1$s обновлен</string>
-
-    <!-- Toasts END -->
-    <string name="default_title">Уведомление</string>
-    <!-- Notification editor END -->
-
-    <!-- Users Messages -->
-    <string name="user_message_title">Заголовок: %s</string>
-    <string name="user_message_text">Текст: %s</string>
-    <string name="user_message_answer">Ответ: %s</string>
-    <string name="no_messages">Нет сообщений</string>
-    <string name="button_create_message">Создать уведомление</string>
-    <!-- Users Messages -->
-
-    <!-- Bottom Navigation -->
-    <string name="notif_settings_label">Настройки уведомлений</string>
-    <string name="notif_editor_label">Редактор уведомлений</string>
-    <string name="users_messages_label">Сообщения</string>
-    <!-- Bottom Navigation END -->
-
-    <!-- Dropdown notification priority -->
-    <string name="low_priority_displayName">Низкий</string>
-    <string name="medium_priority_displayName">Средний</string>
-    <string name="high_priority_displayName">Высокий</string>
-    <string name="urgent_priority_displayName">Срочный</string>
-    <!-- Dropdown notification priority END -->
-
-    <!-- Reply -->
-    <string name="remote_input_label">Введите ваш ответ...</string>
-    <string name="reply_action_title">Ответить</string>
-    <string name="fallback_title">Открыть приложение</string>
-
-    <!-- Reply END -->
-
-    
-
-    
+    <!-- MainScreen strings -->
+    <string name="label_coroutines_count">Количество корутин: %d</string>
+    <string name="label_dispatcher">Диспатчер</string>
+    <string name="label_launch_mode">Режим запуска</string>
+    <string name="label_sequential_launch">Последовательный запуск</string>
+    <string name="label_parallel_launch">Параллельный запуск</string>
+    <string name="label_lazy_launch">Отложенный запуск (задержка 2с)</string>
+    <string name="label_progress_completed">Выполнено: %d / %d</string>
+    <string name="label_waiting_launch">Ожидание запуска (2 секунды)...</string>
+    <string name="button_start_coroutines">Запуск %d корутин</string>
+    <string name="button_cancel_coroutines">Остановить (%d/%d)</string>
+    <string name="status_waiting_launch">Ожидание запуска...</string>
+    <string name="status_sequential_execution">Последовательное выполнение...</string>
+    <string name="status_parallel_execution">Параллельное выполнение...</string>
+    <string name="toast_coroutines_cancelled">Отменено %d из %d корутин</string>
+    <string name="scope_cancel">Отменено пользователем</string>
 
 
-    <!-- System settings -->
-    <string name="go_back_button">Назад</string>
-    <string name="notification_channel_default">Стандартный канал уведомлений</string>
-    <!-- System settings END -->
+    <!-- Error messages -->
+    <string name="error_coroutine_too_long">Корутина %d выполнялась %dms - слишком долго!</string>
+    <string name="error_coroutine_timeout">Таймаут в корутине %d (%dms)</string>
+    <string name="error_reset_settings">Сброс настроек из-за корутины %d (%dms)</string>
+    <string name="error_default_coroutine">Ошибка в корутине %d</string>
+    <string name="snackbar_settings_reset">Настройки сброшены из-за ошибки в корутине %d</string>
 
+    <!-- Dispatchers -->
+    <string name="dispatcher_default">Default</string>
+    <string name="dispatcher_io">IO</string>
+    <string name="dispatcher_main">Main</string>
 </resources>

@@ -57,6 +57,7 @@ dependencies {
 
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.coroutines)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
