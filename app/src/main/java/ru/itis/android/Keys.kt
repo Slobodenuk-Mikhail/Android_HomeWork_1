@@ -9,4 +9,5 @@ object Keys {
     const val ORIGINAL_TEXT = "original_text"
     const val KEY_REPLY = "key_reply"
     const val DEFAULT_CHANNEL_ID = "itis_default_channel_id"
+    const val IS_FIRST_APP_LAUNCH = "is_first_app_launch"
 }

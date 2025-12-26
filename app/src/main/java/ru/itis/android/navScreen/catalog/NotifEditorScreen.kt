@@ -1,4 +1,4 @@
-package ru.itis.android.navScreen.taskViewer
+package ru.itis.android.navScreen.catalog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
