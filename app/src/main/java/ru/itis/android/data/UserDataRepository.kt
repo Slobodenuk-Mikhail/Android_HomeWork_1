@@ -1,0 +1,38 @@
+package ru.itis.android.data
+
+import android.content.SharedPreferences
+import kotlinx.coroutines.delay
+import ru.itis.android.Keys
+import ru.itis.android.model.ProfileDataModel
+
+object UserDataRepository {
+    private var sharedPref: SharedPreferences? = null
+
+    private val profileData = ProfileDataModel(
+        username = "",
+        password = ""
+    )
+
+    fun isFirstAppLaunch(): Boolean {
+        return sharedPref?.getBoolean(Keys.IS_FIRST_APP_LAUNCH, false) ?: false
+    }
+
+
+    fun setIsFirstAppLaunch() {
+        sharedPref?.edit()?.putBoolean(Keys.IS_FIRST_APP_LAUNCH, true)?.apply()
+    }
+
+    fun provideSharedPrefs(sp: SharedPreferences) {
+        if (sharedPref == null) sharedPref = sp
+    }
+
+    suspend fun updateUsername(username: String) {
+        delay(300L)
+        profileData.username = username
+    }
+
+    suspend fun getCurrentUserData(): ProfileDataModel {
+        delay(1000L)
+        return profileData
+    }
+}
