@@ -1,3 +1,5 @@
+package ru.itis.android.navScreen.signin
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import ru.itis.android.di.ServiceLocator
+import ru.itis.android.navigation.CatalogObject
 
 @Composable
 fun SignInScreen(navController: NavHostController) {
@@ -87,12 +90,13 @@ fun SignInScreen(navController: NavHostController) {
 
                     if (userId != null) {
                         // Успешный вход
-                        navController.navigate("main") {
+                        navController.navigate(CatalogObject.route) {
                             popUpTo("signIn") { inclusive = true }
                         }
                     } else {
                         error = "Неверный логин или пароль"
                     }
+                    loading = false
                 }
             },
             modifier = Modifier.fillMaxWidth(),

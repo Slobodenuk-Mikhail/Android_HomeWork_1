@@ -14,13 +14,12 @@ class UserRepository(
     
 ) {
 
-    suspend fun createNewUser(userData: UserDataModel) {
-        withContext(ioDispatcher){
+    suspend fun createNewUser(userData: UserDataModel) : Int {
+        return withContext(ioDispatcher){
             val entity = mapper.map(input = userData)
-            userDao.putUserData(entity)
+            val insertId = userDao.putUserData(entity)
 
-            val user = userDao.getUserByLogAndPas(userData.name, userData.password)
-            return@withContext user?.id ?: -1
+            return@withContext insertId.toInt()
         }
     }
 

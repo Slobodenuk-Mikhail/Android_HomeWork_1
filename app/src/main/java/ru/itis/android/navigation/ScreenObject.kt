@@ -3,10 +3,10 @@ package ru.itis.android.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object NotifSettingsObject
+data object CatalogObject {const val route = "catalog"}
 
 @Serializable
-data object UsersMessagesObject
+data object CreatorObject {const val route = "creator"}
 
 @Serializable
-data object NotifEditorObject
+data object ProfileObject {const val route = "profile"}

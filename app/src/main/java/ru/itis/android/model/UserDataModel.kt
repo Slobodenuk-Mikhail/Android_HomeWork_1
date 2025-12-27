@@ -1,6 +1,6 @@
 package ru.itis.android.model
 
 data class UserDataModel(
-    val name: String,
+    var username: String,
     val password: String
 )

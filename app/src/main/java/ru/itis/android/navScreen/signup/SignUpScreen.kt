@@ -1,5 +1,5 @@
 // navScreen/signUp/SignUpScreen.kt
-package ru.itis.android.navScreen.signUp
+package ru.itis.android.navScreen.signup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,8 +11,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import ru.itis.android.data.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.model.UserDataModel
+import ru.itis.android.navigation.CatalogObject
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
@@ -144,17 +146,27 @@ fun SignUpScreen(navController: NavHostController) {
                     // Создаем пользователя
                     try {
                         val userData = UserDataModel(
-                            name = username,
+                            username = username,
                             password = password
                         )
 
-                        userRepository.createNewUser(userData)
+                        val userId = userRepository.createNewUser(userData)
+                        if (userId != -1) {
+                            UserSession.login(userId, username)
+
+                            // Переходим на экран каталога
+                            navController.navigate(CatalogObject.route) {
+                                popUpTo("signUp") { inclusive = true }
+                            }
+                        }
 
                         // Успех
                         success = "Аккаунт создан! Теперь войдите."
                         error = ""
                         password = ""
                         confirmPassword = ""
+
+
 
                     } catch (e: Exception) {
                         error = "Ошибка при создании аккаунта: ${e.message}"

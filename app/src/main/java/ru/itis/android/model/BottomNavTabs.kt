@@ -7,4 +7,9 @@ data class BottomNavTabs(
     val label: String,
     val icon: ImageVector,
     val contentDescription: String? = null
-)
+) {
+    fun getRouteString(): String = when (route) {
+        is String -> route
+        else -> route.toString()
+    }
+}

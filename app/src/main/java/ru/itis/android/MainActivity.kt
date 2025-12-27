@@ -1,9 +1,9 @@
 package ru.itis.android
 
-import MainPageScreen
-import SignInScreen
+import ProfileScreen
 import android.Manifest
 import android.content.Intent
+import ru.itis.android.navScreen.signin.SignInScreen
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,56 +11,45 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.model.BottomNavTabs
 import ru.itis.android.model.SampleReceiver
-import ru.itis.android.navScreen.taskCreator.UsersMessagesScreen
-import ru.itis.android.navScreen.catalog.NotifEditorScreen
-import ru.itis.android.navScreen.signUp.SignUpScreen
-import ru.itis.android.navigation.NotifEditorObject
-import ru.itis.android.navigation.NotifSettingsObject
-import ru.itis.android.navigation.UsersMessagesObject
+import ru.itis.android.navScreen.catalog.CatalogScreen
+import ru.itis.android.navScreen.creator.CreatorScreen
+import ru.itis.android.navScreen.signup.SignUpScreen
+import ru.itis.android.navigation.ProfileObject
+import ru.itis.android.navigation.CatalogObject
+import ru.itis.android.navigation.CreatorObject
 import ru.itis.android.utils.PermissionHandler
 import ru.itis.android.utils.ResManager
 
 class MainActivity : ComponentActivity() {
 
-
-    private var permissionsHandler: PermissionHandler?= null
-
-
+    private var permissionsHandler: PermissionHandler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        permissionsHandler =
-            PermissionHandler(onPermissionGranted = {}, onPermissionDenied = {}, activity = this)
+        permissionsHandler = PermissionHandler(
+            onPermissionGranted = {},
+            onPermissionDenied = {},
+            activity = this
+        )
         val resManager = ResManager(ctx = applicationContext)
 
         val receiver = SampleReceiver()
@@ -78,103 +67,121 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
         setContent {
-
+            // Основной навигационный контроллер
             val navController = rememberNavController()
-//            val selectedTab = rememberSaveable { mutableIntStateOf(value = 0) }
-//
-//
-//            Scaffold(
-//                bottomBar = {
-//                    NavigationBar(
-//                        windowInsets = NavigationBarDefaults.windowInsets
-//                    ) {
-//                        getBottomNavTabs(resManager).forEachIndexed { index, destination ->
-//                            NavigationBarItem(
-//                                selected = selectedTab.intValue == index,
-//                                onClick = {
-//                                    selectedTab.intValue = index
-//                                    navController.navigate(destination.route)
-//                                },
-//                                icon = {
-//                                    Image(
-//                                        imageVector = destination.icon,
-//                                        contentDescription = destination.contentDescription
-//                                    )
-//                                },
-//                                        label = {
-//                                            Text(text = destination.label)
-//                                        },
-//                            )
-//                        }
-//                    }
-//                }
-//            ) { paddings ->
-//                NavHost(
-//                    navController = navController,
-//                    startDestination = NotifSettingsObject
-//                ) {
-//
-//                    composable<NotifSettingsObject> {
-//                        MainPageScreen(
-//                            navController = navController,
-//                            userRepository = ServiceLocator.getUserRepository()
-//                        )
-//                    }
-//
-//                    composable<NotifEditorObject> {
-//                        NotifEditorScreen()
-//                    }
-//
-//                    composable<UsersMessagesObject> {
-//                        UsersMessagesScreen()
-//                    }
-//
-//                }
-//
-//            }
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
 
-            NavHost(
-                navController = navController,
-                startDestination = "signIn"
-            ) {
-                composable("signIn") {
-                    SignInScreen(navController = navController)
+            // Определяем, показывать ли Bottom Navigation
+            val showBottomNav = when (currentRoute) {
+                CatalogObject.route, CreatorObject.route, ProfileObject.route -> true
+                else -> false
+            }
+
+            // Выбранная вкладка
+            var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+
+            // Обновляем выбранную вкладку при изменении маршрута
+            LaunchedEffect(currentRoute) {
+                selectedTab = when (currentRoute) {
+                    CatalogObject.route -> 0
+                    CreatorObject.route -> 1
+                    ProfileObject.route -> 2
+                    else -> 0
                 }
+            }
 
-                composable("signUp") {
-                    SignUpScreen(navController = navController)
+            Scaffold(
+                bottomBar = {
+                    if (showBottomNav) {
+                        NavigationBar(
+                            windowInsets = NavigationBarDefaults.windowInsets
+                        ) {
+                            getBottomNavTabs(resManager).forEachIndexed { index, destination ->
+                                NavigationBarItem(
+                                    selected = selectedTab == index,
+                                    onClick = {
+                                        selectedTab = index
+                                        navController.navigate(destination.route.toString()) {
+                                            // Очищаем стек при переключении вкладок
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                    icon = {
+                                        Icon(
+                                            destination.icon,
+                                            contentDescription = destination.contentDescription
+                                        )
+                                    },
+                                    label = {
+                                        Text(text = destination.label)
+                                    },
+                                )
+                            }
+                        }
+                    }
                 }
+            ) { paddingValues ->
+                NavHost(
+                    navController = navController,
+                    startDestination = "signIn", // Начинаем с экрана входа
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    // Экран входа
+                    composable("signIn") {
+                        SignInScreen(navController = navController)
+                    }
 
-                composable("main") {
-                    MainPageScreen(
-                        navController = navController,
-                        userRepository = ServiceLocator.getUserRepository()
-                    )
+                    // Экран регистрации
+                    composable("signUp") {
+                        SignUpScreen(navController = navController)
+                    }
+
+                    // Экран каталога (список контента)
+                    composable<CatalogObject> {
+                        CatalogScreen()
+                    }
+
+                    // Экран создания (добавление контента)
+                    composable<CreatorObject> {
+                        CreatorScreen()
+                    }
+
+                    // Экран профиля
+                    composable<ProfileObject> {
+                        ProfileScreen(
+                            navController = navController,
+                            userRepository = ServiceLocator.getUserRepository()
+                        )
+                    }
                 }
             }
         }
     }
-    
-    private fun getBottomNavTabs(resManager: ResManager): List<BottomNavTabs> = listOf(
 
+    private fun getBottomNavTabs(resManager: ResManager): List<BottomNavTabs> = listOf(
         BottomNavTabs(
-            route = NotifSettingsObject,
-            label = resManager.getString(R.string.notif_settings_label),
-            icon = Icons.Default.Settings,
+            route = CatalogObject,
+            label = "Каталог",
+            icon = Icons.Default.List,
+            contentDescription = "Каталог фильмов"
         ),
         BottomNavTabs(
-            route = NotifEditorObject,
-            label = resManager.getString(R.string.notif_editor_label),
-            icon = Icons.Default.Edit
+            route = CreatorObject,
+            label = "Добавить",
+            icon = Icons.Default.Add,
+            contentDescription = "Добавить фильм"
         ),
         BottomNavTabs(
-            route = UsersMessagesObject,
-            label = resManager.getString(R.string.users_messages_label),
-            icon = Icons.Default.MailOutline
+            route = ProfileObject,
+            label = "Профиль",
+            icon = Icons.Default.Person,
+            contentDescription = "Профиль пользователя"
         )
     )
-
-
 }

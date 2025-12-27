@@ -3,12 +3,12 @@ package ru.itis.android.data
 import android.content.SharedPreferences
 import kotlinx.coroutines.delay
 import ru.itis.android.Keys
-import ru.itis.android.model.ProfileDataModel
+import ru.itis.android.model.UserDataModel
 
 object UserDataRepository {
     private var sharedPref: SharedPreferences? = null
 
-    private val profileData = ProfileDataModel(
+    private val userData = UserDataModel(
         username = "",
         password = ""
     )
@@ -28,11 +28,11 @@ object UserDataRepository {
 
     suspend fun updateUsername(username: String) {
         delay(300L)
-        profileData.username = username
+        userData.username = username
     }
 
-    suspend fun getCurrentUserData(): ProfileDataModel {
+    suspend fun getCurrentUserData(): UserDataModel {
         delay(1000L)
-        return profileData
+        return userData
     }
 }

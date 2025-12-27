@@ -12,7 +12,7 @@ import ru.itis.android.db.entity.UserEntity
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun putUserData(user: UserEntity)
+    suspend fun putUserData(user: UserEntity) : Long
 
     @Query("SELECT * FROM users WHERE id = :userId")
     suspend fun getUserData(userId: Int): UserEntity?

@@ -7,14 +7,14 @@ class UserModelMapper {
 
     fun map(input: UserDataModel): UserEntity {
         return UserEntity(
-            username = input.name,
+            username = input.username,
             password = input.password
         )
     }
 
     fun map(input: UserEntity): UserDataModel {
         return UserDataModel(
-            name = input.username,
+            username = input.username,
             password = input.password
         )
     }
