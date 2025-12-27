@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import ru.itis.android.data.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.navigation.CatalogObject
 
@@ -86,10 +87,11 @@ fun SignInScreen(navController: NavHostController) {
                 scope.launch {
                     loading = true
                     val userId = userRepository.login(username, password)
-                    loading = false
 
                     if (userId != null) {
                         // Успешный вход
+                        UserSession.login(userId, username)
+
                         navController.navigate(CatalogObject.route) {
                             popUpTo("signIn") { inclusive = true }
                         }

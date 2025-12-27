@@ -75,7 +75,9 @@ class MainActivity : ComponentActivity() {
 
             // Определяем, показывать ли Bottom Navigation
             val showBottomNav = when (currentRoute) {
-                CatalogObject.route, CreatorObject.route, ProfileObject.route -> true
+                CatalogObject.route, // "catalog"
+                CreatorObject.route, // "creator"
+                ProfileObject.route -> true // "profile"
                 else -> false
             }
 
@@ -103,7 +105,7 @@ class MainActivity : ComponentActivity() {
                                     selected = selectedTab == index,
                                     onClick = {
                                         selectedTab = index
-                                        navController.navigate(destination.route.toString()) {
+                                        navController.navigate(destination.route) {
                                             // Очищаем стек при переключении вкладок
                                             popUpTo(navController.graph.startDestinationId) {
                                                 saveState = true
@@ -143,17 +145,17 @@ class MainActivity : ComponentActivity() {
                     }
 
                     // Экран каталога (список контента)
-                    composable<CatalogObject> {
+                    composable("catalog") {
                         CatalogScreen()
                     }
 
                     // Экран создания (добавление контента)
-                    composable<CreatorObject> {
+                    composable("creator") {
                         CreatorScreen()
                     }
 
                     // Экран профиля
-                    composable<ProfileObject> {
+                    composable("profile") {
                         ProfileScreen(
                             navController = navController,
                             userRepository = ServiceLocator.getUserRepository()
@@ -166,19 +168,19 @@ class MainActivity : ComponentActivity() {
 
     private fun getBottomNavTabs(resManager: ResManager): List<BottomNavTabs> = listOf(
         BottomNavTabs(
-            route = CatalogObject,
+            route = CatalogObject.route,
             label = "Каталог",
             icon = Icons.Default.List,
             contentDescription = "Каталог фильмов"
         ),
         BottomNavTabs(
-            route = CreatorObject,
+            route = CreatorObject.route,
             label = "Добавить",
             icon = Icons.Default.Add,
             contentDescription = "Добавить фильм"
         ),
         BottomNavTabs(
-            route = ProfileObject,
+            route = ProfileObject.route,
             label = "Профиль",
             icon = Icons.Default.Person,
             contentDescription = "Профиль пользователя"
