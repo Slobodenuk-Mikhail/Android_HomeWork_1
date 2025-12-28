@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ru.itis.android.data.UserRepository
-import ru.itis.android.data.UserSession
+import ru.itis.android.data.users.UserRepository
+import ru.itis.android.data.users.UserSession
 
 @Composable
 fun ProfileScreen(

@@ -1,4 +1,4 @@
-package ru.itis.android.data
+package ru.itis.android.data.users
 
 import android.content.SharedPreferences
 import kotlinx.coroutines.delay

@@ -34,6 +34,8 @@ import ru.itis.android.navScreen.signup.SignUpScreen
 import ru.itis.android.navigation.ProfileObject
 import ru.itis.android.navigation.CatalogObject
 import ru.itis.android.navigation.CreatorObject
+import ru.itis.android.navigation.SignInObject
+import ru.itis.android.navigation.SignUpObject
 import ru.itis.android.utils.PermissionHandler
 import ru.itis.android.utils.ResManager
 
@@ -131,31 +133,31 @@ class MainActivity : ComponentActivity() {
             ) { paddingValues ->
                 NavHost(
                     navController = navController,
-                    startDestination = "signIn", // Начинаем с экрана входа
+                    startDestination = SignInObject.route,
                     modifier = Modifier.padding(paddingValues)
                 ) {
                     // Экран входа
-                    composable("signIn") {
+                    composable(SignInObject.route) {
                         SignInScreen(navController = navController)
                     }
 
                     // Экран регистрации
-                    composable("signUp") {
+                    composable(SignUpObject.route) {
                         SignUpScreen(navController = navController)
                     }
 
                     // Экран каталога (список контента)
-                    composable("catalog") {
+                    composable(CatalogObject.route) {
                         CatalogScreen()
                     }
 
                     // Экран создания (добавление контента)
-                    composable("creator") {
+                    composable(CreatorObject.route) {
                         CreatorScreen()
                     }
 
                     // Экран профиля
-                    composable("profile") {
+                    composable(ProfileObject.route) {
                         ProfileScreen(
                             navController = navController,
                             userRepository = ServiceLocator.getUserRepository()

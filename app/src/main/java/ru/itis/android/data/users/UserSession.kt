@@ -1,4 +1,4 @@
-package ru.itis.android.data
+package ru.itis.android.data.users
 
 object UserSession {
     private var currentUserId: Int? = null

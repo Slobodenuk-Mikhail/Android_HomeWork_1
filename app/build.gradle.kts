@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.coil.network)
 
     implementation(libs.room)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.room.compiler)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -1,7 +1,7 @@
 package ru.itis.android
 
 import android.app.Application
-import ru.itis.android.data.UserDataRepository
+import ru.itis.android.data.users.UserDataRepository
 import ru.itis.android.di.ServiceLocator
 
 class InceptionApp : Application() {

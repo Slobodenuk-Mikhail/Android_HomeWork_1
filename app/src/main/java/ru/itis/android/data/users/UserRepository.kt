@@ -1,9 +1,8 @@
-package ru.itis.android.data
+package ru.itis.android.data.users
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.itis.android.db.dao.UserDao
-import ru.itis.android.di.ServiceLocator
 import ru.itis.android.mapper.UserModelMapper
 import ru.itis.android.model.UserDataModel
 

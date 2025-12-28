@@ -6,11 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import ru.itis.android.data.UserSession
+import ru.itis.android.data.users.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.navigation.CatalogObject
 

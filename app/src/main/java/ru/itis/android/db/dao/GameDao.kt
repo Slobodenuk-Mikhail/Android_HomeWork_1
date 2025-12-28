@@ -7,21 +7,32 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import ru.itis.android.db.entity.GameEntity
+import ru.itis.android.db.entity.UserEntity
 
 @Dao
 interface GameDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun putGameData(game: GameEntity)
+    suspend fun putGame(game: GameEntity): Long
 
     @Query("SELECT * FROM games WHERE id = :gameId")
-    fun getGameData(gameId: Int): GameEntity?
+    suspend fun getGameById(gameId: Int): GameEntity?
+
+    @Query("SELECT * FROM games WHERE author_id = :authorId")
+    suspend fun getGamesByAuthorId(authorId: Int): List<GameEntity>
+
+    @Query("SELECT * FROM games")
+    suspend fun getAllGames(): List<GameEntity>
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    fun updateGameData(game: GameEntity)
+    suspend fun updateGame(game: GameEntity)
 
     @Delete
-    fun deleteGameEntity(game: GameEntity)
+    suspend fun deleteGameEntity(game: GameEntity)
 
     @Query("DELETE FROM games WHERE id = :gameId")
-    fun deleteGameById(gameId: Int)
+    suspend fun deleteGameById(gameId: Int)
+
+    @Query("DELETE FROM games WHERE author_id = :authorId")
+    suspend fun deleteGamesByAuthor(authorId: Int)
 }
