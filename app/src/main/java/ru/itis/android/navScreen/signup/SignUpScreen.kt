@@ -1,4 +1,3 @@
-// navScreen/signUp/SignUpScreen.kt
 package ru.itis.android.navScreen.signup
 
 import androidx.compose.foundation.layout.*
@@ -7,19 +6,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import ru.itis.android.R
+import ru.itis.android.utils.ResManager
 import ru.itis.android.data.users.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.model.UserDataModel
 import ru.itis.android.navigation.CatalogObject
 
 @Composable
-fun SignUpScreen(navController: NavHostController) {
+fun SignUpScreen(
+    navController: NavHostController,
+    resManager: ResManager
+) {
 
-    // Состояние
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -27,7 +31,6 @@ fun SignUpScreen(navController: NavHostController) {
     var success by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
 
-    // Репозиторий
     val userRepository = remember { ServiceLocator.getUserRepository() }
     val scope = rememberCoroutineScope()
 
@@ -39,15 +42,13 @@ fun SignUpScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        // Заголовок
         Text(
-            text = "Регистрация",
+            text = stringResource(R.string.signup_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Поле логина
         OutlinedTextField(
             value = username,
             onValueChange = {
@@ -55,13 +56,12 @@ fun SignUpScreen(navController: NavHostController) {
                 error = ""
                 success = ""
             },
-            label = { Text("Логин") },
+            label = { Text(stringResource(R.string.login_hint)) },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Поле пароля
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -69,14 +69,13 @@ fun SignUpScreen(navController: NavHostController) {
                 error = ""
                 success = ""
             },
-            label = { Text("Пароль") },
+            label = { Text(stringResource(R.string.password_hint)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Подтверждение пароля
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = {
@@ -84,12 +83,11 @@ fun SignUpScreen(navController: NavHostController) {
                 error = ""
                 success = ""
             },
-            label = { Text("Подтвердите пароль") },
+            label = { Text(stringResource(R.string.confirm_password_hint)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Сообщения
         if (error.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -113,32 +111,31 @@ fun SignUpScreen(navController: NavHostController) {
             onClick = {
                 // Валидация на UI
                 if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                    error = "Заполните все поля"
+                    error = resManager.getString(R.string.validation_empty)
                     return@Button
                 }
 
                 if (username.length < 3) {
-                    error = "Логин должен быть не менее 3 символов"
+                    error = resManager.getString(R.string.username_length_error)
                     return@Button
                 }
 
                 if (password.length < 4) {
-                    error = "Пароль должен быть не менее 4 символов"
+                    error = resManager.getString(R.string.password_length_error)
                     return@Button
                 }
 
                 if (password != confirmPassword) {
-                    error = "Пароли не совпадают"
+                    error = resManager.getString(R.string.password_mismatch)
                     return@Button
                 }
 
                 scope.launch {
                     loading = true
 
-                    // Проверяем, не занят ли логин
                     val exists = userRepository.isUserExists(username)
                     if (exists) {
-                        error = "Пользователь с таким логином уже существует"
+                        error = resManager.getString(R.string.user_exists)
                         loading = false
                         return@launch
                     }
@@ -151,25 +148,21 @@ fun SignUpScreen(navController: NavHostController) {
                         )
 
                         val userId = userRepository.createNewUser(userData)
-                        if (userId != -1) {
+                        if (userId > 0) {
                             UserSession.login(userId, username)
 
-                            // Переходим на экран каталога
                             navController.navigate(CatalogObject.route) {
-                                popUpTo("signUp") { inclusive = true }
+                                // Очищаем весь стек навигации
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
+                        } else {
+                            error = resManager.getString(R.string.account_creation_error)
                         }
-
-                        // Успех
-                        success = "Аккаунт создан! Теперь войдите."
-                        error = ""
-                        password = ""
-                        confirmPassword = ""
-
-
-
                     } catch (e: Exception) {
-                        error = "Ошибка при создании аккаунта: ${e.message}"
+                        error = resManager.getString(R.string.generic_error, e.message ?: "")
                     }
 
                     loading = false
@@ -185,7 +178,7 @@ fun SignUpScreen(navController: NavHostController) {
                     color = Color.White
                 )
             } else {
-                Text("Создать аккаунт")
+                Text(stringResource(R.string.create_account_button))
             }
         }
 
@@ -198,7 +191,7 @@ fun SignUpScreen(navController: NavHostController) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Назад ко входу")
+            Text(stringResource(R.string.back_to_signin))
         }
     }
 }

@@ -42,8 +42,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,15 +52,18 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import ru.itis.android.R
+import ru.itis.android.utils.ResManager
 import ru.itis.android.data.users.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.model.GameDataModel
+import ru.itis.android.utils.ImageStorage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -68,19 +71,15 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatorScreen(
-    onGameCreated: () -> Unit = {} // Колбэк при успешном создании игры
+    onGameCreated: () -> Unit = {},
+    resManager: ResManager
 ) {
-    // Контекст приложения
     val context = LocalContext.current
-    // Scope для корутин
     val scope = rememberCoroutineScope()
-    // Snackbar для уведомлений
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Получаем репозиторий игр
     val gameRepository = remember { ServiceLocator.getGameRepository() }
 
-    // Состояния для полей формы
     var title by remember { mutableStateOf("") }
     var genre by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf("") }
@@ -88,50 +87,47 @@ fun CreatorScreen(
     var imageUri by remember { mutableStateOf<androidx.compose.ui.graphics.ImageBitmap?>(null) }
     var imageUriString by remember { mutableStateOf<String?>(null) }
 
-    // Состояние для выпадающего списка жанров
     var isGenreExpanded by remember { mutableStateOf(false) }
-    // Список доступных жанров
     val genres = listOf(
         "Экшен", "РПГ", "Стратегия", "Гонки",
         "Спорт", "Хоррор", "Инди", "Пазл", "Аркада", "Приключение"
     )
 
-    // Ланчер для выбора изображения из галереи (новый API)
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        // Сохраняем URI изображения
         uri?.let { selectedUri ->
-            imageUriString = selectedUri.toString()
+            scope.launch {
+                try {
+                    val savedUri = ImageStorage.saveImageToInternalStorage(context, selectedUri)
+                    imageUriString = savedUri
 
-            // Загружаем изображение для предпросмотра
-            try {
-                val inputStream = context.contentResolver.openInputStream(selectedUri)
-                val bytes = inputStream?.readBytes()
-                bytes?.let {
-                    val bitmap = android.graphics.BitmapFactory.decodeByteArray(it, 0, it.size)
-                    imageUri = bitmap.asImageBitmap()
-                }
-                inputStream?.close()
-            } catch (e: Exception) {
-                scope.launch {
-                    snackbarHostState.showSnackbar("Ошибка загрузки изображения: ${e.message}")
+                    val fileSize = ImageStorage.getImageFileSize(context, savedUri)
+                    snackbarHostState.showSnackbar(resManager.getString(R.string.image_saved, fileSize / 1024))
+
+                    val inputStream = context.contentResolver.openInputStream(selectedUri)
+                    val bytes = inputStream?.readBytes()
+                    bytes?.let {
+                        val bitmap = android.graphics.BitmapFactory.decodeByteArray(it, 0, it.size)
+                        imageUri = bitmap.asImageBitmap()
+                    }
+                    inputStream?.close()
+
+                } catch (e: Exception) {
+                    snackbarHostState.showSnackbar(resManager.getString(R.string.error_saving_image, e.message ?: ""))
                 }
             }
         }
     }
 
-    // Состояние скролла
     val scrollState = rememberScrollState()
-    // Получаем текущего пользователя
     val currentUsername = UserSession.getCurrentUsername()
 
-    // Основной Scaffold с TopBar и Snackbar
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Создание новой игры") }
+                title = { Text(stringResource(R.string.creator_title)) }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -172,7 +168,7 @@ fun CreatorScreen(
                             model = ImageRequest.Builder(context)
                                 .data(imageUriString)
                                 .build(),
-                            contentDescription = "Выбранное изображение",
+                            contentDescription = stringResource(R.string.add_image_hint),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -183,14 +179,14 @@ fun CreatorScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_message_24),
-                                contentDescription = "Добавить фото",
+                                painter = painterResource(id = R.drawable.ic_outline_add_a_photo_24),
+                                contentDescription = stringResource(R.string.add_image_description),
                                 modifier = Modifier.size(64.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Нажмите для выбора изображения",
+                                text = stringResource(R.string.add_image_hint),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -198,11 +194,10 @@ fun CreatorScreen(
                 }
             }
 
-            // Поле для ввода названия игры
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Название игры*") },
+                label = { Text(stringResource(R.string.game_title_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 isError = title.isBlank()
@@ -217,7 +212,7 @@ fun CreatorScreen(
                 OutlinedTextField(
                     value = genre,
                     onValueChange = { genre = it },
-                    label = { Text("Жанр*") },
+                    label = { Text(stringResource(R.string.genre_hint)) },
                     readOnly = true, // Поле только для чтения
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isGenreExpanded)
@@ -254,7 +249,7 @@ fun CreatorScreen(
                         rating = it
                     }
                 },
-                label = { Text("Рейтинг (0-100)*") },
+                label = { Text(stringResource(R.string.rating_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -265,7 +260,7 @@ fun CreatorScreen(
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Описание") },
+                label = { Text(stringResource(R.string.description_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
@@ -281,7 +276,7 @@ fun CreatorScreen(
                             try {
                                 val currentUserId = UserSession.getCurrentUserId()
                                 if (currentUserId == null) {
-                                    snackbarHostState.showSnackbar("Ошибка: пользователь не авторизован")
+                                    snackbarHostState.showSnackbar(resManager.getString(R.string.error_unauthorized_creator))
                                     return@launch
                                 }
 
@@ -298,7 +293,7 @@ fun CreatorScreen(
 
                                 // Сохраняем игру в базу данных
                                 gameRepository.createGame(gameModel)
-                                snackbarHostState.showSnackbar("Игра успешно создана!")
+                                snackbarHostState.showSnackbar(resManager.getString(R.string.game_created))
 
                                 // Очищаем форму
                                 title = ""
@@ -313,20 +308,20 @@ fun CreatorScreen(
 
                             } catch (e: Exception) {
                                 // Показываем ошибку
-                                snackbarHostState.showSnackbar("Ошибка: ${e.message}")
+                                snackbarHostState.showSnackbar(resManager.getString(R.string.error_creating_game, e.message ?: ""))
                             }
                         }
                     } else {
                         // Показываем сообщение об ошибке валидации
                         scope.launch {
-                            snackbarHostState.showSnackbar("Заполните все обязательные поля (*)")
+                            snackbarHostState.showSnackbar(resManager.getString(R.string.validation_error))
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = validateInput(title, genre, rating) // Кнопка активна только при валидных данных
             ) {
-                Text("Создать игру")
+                Text(stringResource(R.string.create_game_button))
             }
 
             // Блок с информацией об авторе
@@ -341,7 +336,6 @@ fun CreatorScreen(
                         modifier = Modifier.padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Аватар автора (первая буква имени)
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -358,7 +352,7 @@ fun CreatorScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Автор",
+                                text = stringResource(R.string.author_label),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -373,36 +367,22 @@ fun CreatorScreen(
         }
     }
 
-    // Проверяем авторизацию при запуске экрана
     LaunchedEffect(Unit) {
         if (UserSession.getCurrentUserId() == null) {
-            snackbarHostState.showSnackbar("Для создания игры нужно войти в систему")
+            snackbarHostState.showSnackbar(resManager.getString(R.string.login_required))
         }
     }
 }
 
-/**
- * Проверяет валидность введенных данных
- * @param title название игры
- * @param genre жанр игры
- * @param rating рейтинг игры
- * @return true если все данные валидны
- */
 private fun validateInput(title: String, genre: String, rating: String): Boolean {
-    // Проверяем, что все обязательные поля заполнены
     if (title.isBlank() || genre.isBlank() || rating.isBlank()) {
         return false
     }
 
-    // Проверяем, что рейтинг - число от 0 до 100
     val ratingInt = rating.toIntOrNull()
     return ratingInt != null && ratingInt in 0..100
 }
 
-/**
- * Возвращает текущую дату в формате "дд.мм.гггг"
- * @return строка с текущей датой
- */
 private fun getCurrentDate(): String {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
     return dateFormat.format(Date())

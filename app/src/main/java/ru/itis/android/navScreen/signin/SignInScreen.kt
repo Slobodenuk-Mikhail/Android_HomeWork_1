@@ -6,23 +6,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import ru.itis.android.R
 import ru.itis.android.data.users.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.navigation.CatalogObject
+import ru.itis.android.utils.ResManager
 
 @Composable
-fun SignInScreen(navController: NavHostController) {
+fun SignInScreen(
+    navController: NavHostController,
+    resManager: ResManager
+) {
 
-    // Состояние
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
 
-    // Репозиторий
     val userRepository = remember { ServiceLocator.getUserRepository() }
     val scope = rememberCoroutineScope()
 
@@ -34,22 +39,20 @@ fun SignInScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        // Заголовок
         Text(
-            text = "Вход",
+            text = stringResource(R.string.signin_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Поле логина
         OutlinedTextField(
             value = username,
             onValueChange = {
                 username = it
                 error = ""
             },
-            label = { Text("Логин") },
+            label = { Text(stringResource(R.string.login_hint)) },
             modifier = Modifier.fillMaxWidth(),
             isError = error.isNotEmpty()
         )
@@ -62,8 +65,9 @@ fun SignInScreen(navController: NavHostController) {
                 password = it
                 error = ""
             },
-            label = { Text("Пароль") },
+            label = { Text(stringResource(R.string.password_hint)) },
             modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation(),
             isError = error.isNotEmpty()
         )
 
@@ -79,7 +83,7 @@ fun SignInScreen(navController: NavHostController) {
             onClick = {
                 // Валидация на UI уровне
                 if (username.isEmpty() || password.isEmpty()) {
-                    error = "Заполните все поля"
+                    error = resManager.getString(R.string.validation_empty)
                     return@Button
                 }
 
@@ -91,11 +95,16 @@ fun SignInScreen(navController: NavHostController) {
                         // Успешный вход
                         UserSession.login(userId, username)
 
+                        // Переходим на главный экран с очисткой стека
                         navController.navigate(CatalogObject.route) {
-                            popUpTo("signIn") { inclusive = true }
+                            // Очищаем весь стек навигации
+                            popUpTo(0) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
                     } else {
-                        error = "Неверный логин или пароль"
+                        error = resManager.getString(R.string.invalid_credentials)
                     }
                     loading = false
                 }
@@ -110,20 +119,19 @@ fun SignInScreen(navController: NavHostController) {
                     color = Color.White
                 )
             } else {
-                Text("Войти")
+                Text(stringResource(R.string.signin_button))
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Кнопка регистрации
         OutlinedButton(
             onClick = {
                 navController.navigate("signUp")
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Создать аккаунт")
+            Text(stringResource(R.string.signup_button))
         }
     }
 }

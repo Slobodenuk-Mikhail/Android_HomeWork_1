@@ -20,7 +20,7 @@ import coil3.Image
 data class GameEntity (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int = 1,
+    val id: Int = 0,
 
     @ColumnInfo(name = "title")
     val title: String,

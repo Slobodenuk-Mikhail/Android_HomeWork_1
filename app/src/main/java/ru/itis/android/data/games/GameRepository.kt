@@ -55,4 +55,10 @@ class GameRepository(
             gameDao.deleteGamesByAuthor(authorId)
         }
     }
+
+    suspend fun refreshUserGames(userId: Int): List<GameDataModel> {
+        return withContext(ioDispatcher) {
+            gameDao.getGamesByAuthorId(userId).map { mapper.map(it) }
+        }
+    }
 }

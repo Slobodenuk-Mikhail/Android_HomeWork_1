@@ -17,6 +17,7 @@ coil = "3.0.4"
 room = "2.8.4"
 ksp = "2.0.21-1.0.26"
 foundation = "1.10.0"
+uiText = "1.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,7 @@ coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", versi
 room = {group = "androidx.room", name = "room-runtime", version.ref = "room"}
 room-compiler = {group = "androidx.room", name = "room-compiler", version.ref = "room"}
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 
 [bundles]

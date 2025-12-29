@@ -25,12 +25,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import ru.itis.android.data.users.UserSession
 import ru.itis.android.di.ServiceLocator
 import ru.itis.android.model.BottomNavTabs
 import ru.itis.android.model.SampleReceiver
-import ru.itis.android.navScreen.catalog.CatalogScreen
 import ru.itis.android.navScreen.creator.CreatorScreen
 import ru.itis.android.navScreen.signup.SignUpScreen
+import ru.itis.android.navScreen.userGames.CatalogScreen
 import ru.itis.android.navigation.ProfileObject
 import ru.itis.android.navigation.CatalogObject
 import ru.itis.android.navigation.CreatorObject
@@ -41,11 +42,16 @@ import ru.itis.android.utils.ResManager
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var resManager: ResManager
     private var permissionsHandler: PermissionHandler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        ServiceLocator.initDatabase(applicationContext)
+        UserSession.initialize(this)
+        resManager = ResManager(applicationContext)
 
         permissionsHandler = PermissionHandler(
             onPermissionGranted = {},
@@ -70,6 +76,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val startDestination = if (UserSession.isLogged()) {
+                CatalogObject.route
+            } else {
+                SignInObject.route
+            }
+
             // Основной навигационный контроллер
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -77,9 +89,9 @@ class MainActivity : ComponentActivity() {
 
             // Определяем, показывать ли Bottom Navigation
             val showBottomNav = when (currentRoute) {
-                CatalogObject.route, // "catalog"
-                CreatorObject.route, // "creator"
-                ProfileObject.route -> true // "profile"
+                CatalogObject.route,
+                CreatorObject.route,
+                ProfileObject.route -> true
                 else -> false
             }
 
@@ -133,34 +145,36 @@ class MainActivity : ComponentActivity() {
             ) { paddingValues ->
                 NavHost(
                     navController = navController,
-                    startDestination = SignInObject.route,
+                    startDestination = startDestination,
                     modifier = Modifier.padding(paddingValues)
                 ) {
-                    // Экран входа
                     composable(SignInObject.route) {
-                        SignInScreen(navController = navController)
+                        SignInScreen(
+                            navController = navController,
+                            resManager = resManager
+                        )
                     }
 
-                    // Экран регистрации
                     composable(SignUpObject.route) {
-                        SignUpScreen(navController = navController)
+                        SignUpScreen(
+                            navController = navController,
+                            resManager = resManager
+                        )
                     }
 
-                    // Экран каталога (список контента)
                     composable(CatalogObject.route) {
-                        CatalogScreen()
+                        CatalogScreen(resManager = resManager)
                     }
 
-                    // Экран создания (добавление контента)
                     composable(CreatorObject.route) {
-                        CreatorScreen()
+                        CreatorScreen(resManager = resManager)
                     }
 
-                    // Экран профиля
                     composable(ProfileObject.route) {
                         ProfileScreen(
                             navController = navController,
-                            userRepository = ServiceLocator.getUserRepository()
+                            userRepository = ServiceLocator.getUserRepository(),
+                            resManager = resManager
                         )
                     }
                 }
@@ -171,21 +185,21 @@ class MainActivity : ComponentActivity() {
     private fun getBottomNavTabs(resManager: ResManager): List<BottomNavTabs> = listOf(
         BottomNavTabs(
             route = CatalogObject.route,
-            label = "Каталог",
+            label = resManager.getString(R.string.catalog_tab),
             icon = Icons.Default.List,
-            contentDescription = "Каталог фильмов"
+            contentDescription = resManager.getString(R.string.catalog_tab_description)
         ),
         BottomNavTabs(
             route = CreatorObject.route,
-            label = "Добавить",
+            label = resManager.getString(R.string.creator_tab),
             icon = Icons.Default.Add,
-            contentDescription = "Добавить фильм"
+            contentDescription = resManager.getString(R.string.creator_tab_description)
         ),
         BottomNavTabs(
             route = ProfileObject.route,
-            label = "Профиль",
+            label = resManager.getString(R.string.profile_tab),
             icon = Icons.Default.Person,
-            contentDescription = "Профиль пользователя"
+            contentDescription = resManager.getString(R.string.profile_tab_description)
         )
     )
 }

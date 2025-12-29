@@ -27,9 +27,8 @@ object ServiceLocator {
                 appCtx,
                 InceptionDatabase::class.java,
                 DB_NAME
-            ).fallbackToDestructiveMigration()
+            )
                 .build()
-            //.addMigrations(DatabaseMigrations.MIGRATION_2_3)
 
 
         _userRepository = UserRepository(
